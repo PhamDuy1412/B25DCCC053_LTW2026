@@ -1,0 +1,79 @@
+:root {
+  --bg: #0b1033;
+  --panel: #141c4d;
+  --panel-2: #1c2661;
+  --line: #2f3b86;
+  --text: #eef1ff;
+  --muted: #a9b2e6;
+  --gold: #f5b82e;
+  --green: #1fa35c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+}
+
+a { color: var(--gold); }
+h2 { margin: 0 0 12px; }
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 18px;
+  background: var(--gold);
+  color: #1a1400;
+  font-weight: 600;
+}
+
+input, select {
+  font: inherit;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 14px 24px;
+  background: var(--panel);
+  border-bottom: 2px solid var(--gold);
+}
+.brand { font-size: 1.25rem; font-weight: 700; color: var(--gold); }
+.nav-links { display: flex; flex-wrap: wrap; gap: 20px; }
+.nav-link { color: var(--text); text-decoration: none; padding: 4px 0; }
+.nav-link.active { color: #ff4d4d; font-weight: 700; }
+
+.content { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
+.notice { font-size: 1.1rem; color: var(--muted); }
+.notice-error { color: #ff7a74; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-bottom: 12px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: var(--panel); }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+th { background: var(--panel-2); }
+
+.detail-question { font-size: 1.15rem; }
+.detail-options { list-style: none; padding: 0; max-width: 560px; }
+.detail-options li {
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.detail-options li.option-correct { background: var(--green); border-color: var(--green); font-weight: 600; }
