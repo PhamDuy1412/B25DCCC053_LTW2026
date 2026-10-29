@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TIME_PER_QUESTION } from '../data';
-import { calcPrize } from '../utils';
+import { LETTERS, TIME_PER_QUESTION } from '../data';
+import { calcPrize, pickTwoWrong, audiencePercents } from '../utils';
 import QuestionCard from '../components/QuestionCard';
 import Timer from '../components/Timer';
 import MoneyLadder from '../components/MoneyLadder';
+import Lifelines from '../components/Lifelines';
+import AudienceChart from '../components/AudienceChart';
 
 // status của câu hiện tại: 'answering' -> 'locked' -> 'revealed'
-const Play = ({ questions, playerName }) => {
+const Play = ({ questions, playerName, onFinish }) => {
   const navigate = useNavigate();
   const name = playerName.trim();
 
@@ -15,12 +17,23 @@ const Play = ({ questions, playerName }) => {
   const [status, setStatus] = useState('answering');
   const [selected, setSelected] = useState(null);
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
+  const [hidden, setHidden] = useState([]);
+  const [audience, setAudience] = useState(null);
+  const [usedFifty, setUsedFifty] = useState(false);
+  const [usedAudience, setUsedAudience] = useState(false);
 
   const question = questions[index];
   const total = questions.length;
 
   const finishGame = (correctCount, reason) => {
     const prize = calcPrize(correctCount, reason);
+    onFinish({
+      id: Date.now(),
+      name,
+      prize,
+      correctCount,
+      playedAt: new Date().toLocaleString('vi-VN'),
+    });
     navigate('/result', {
       replace: true,
       state: { name, prize, correctCount, reason },
@@ -28,10 +41,27 @@ const Play = ({ questions, playerName }) => {
   };
 
   const handleSelect = (i) => {
-    if (status !== 'answering') return;
+    if (status !== 'answering' || hidden.includes(i)) return;
     setSelected(i);
     setStatus('locked');
   };
+
+  const handleFifty = () => {
+    const toHide = pickTwoWrong(question.answer, question.options.length);
+    setHidden(toHide);
+    setUsedFifty(true);
+    // nếu biểu đồ đang hiện thì tính lại theo các đáp án còn lại
+    setAudience((prev) =>
+      prev ? audiencePercents(question.answer, toHide, question.options.length) : prev
+    );
+  };
+
+  const handleAudience = () => {
+    setAudience(audiencePercents(question.answer, hidden, question.options.length));
+    setUsedAudience(true);
+  };
+
+  const handleStop = () => finishGame(index, 'stop');
 
   // Đồng hồ: chỉ chạy khi đang trả lời
   useEffect(() => {
@@ -59,6 +89,8 @@ const Play = ({ questions, playerName }) => {
           } else {
             setIndex(index + 1);
             setSelected(null);
+            setHidden([]);
+            setAudience(null);
             setTimeLeft(TIME_PER_QUESTION);
             setStatus('answering');
           }
@@ -70,6 +102,27 @@ const Play = ({ questions, playerName }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
+
+  // Phím tắt A–D
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const i = LETTERS.indexOf(e.key.toUpperCase());
+      if (e.key.length !== 1 || i === -1) return;
+      handleSelect(i);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, hidden, index]);
+
+  // Tiêu đề tab
+  useEffect(() => {
+    document.title = `Câu ${index + 1}/${total} – ${name}`;
+    return () => {
+      document.title = 'Ai là triệu phú';
+    };
+  }, [index, total, name]);
 
   if (!question) return null;
 
@@ -83,8 +136,18 @@ const Play = ({ questions, playerName }) => {
           total={total}
           status={status}
           selected={selected}
+          hidden={hidden}
           onSelect={handleSelect}
         />
+        <Lifelines
+          usedFifty={usedFifty}
+          usedAudience={usedAudience}
+          disabled={status !== 'answering'}
+          onFifty={handleFifty}
+          onAudience={handleAudience}
+          onStop={handleStop}
+        />
+        {audience && <AudienceChart percents={audience} />}
       </div>
       <aside className="play-side">
         <MoneyLadder currentIndex={index} />
