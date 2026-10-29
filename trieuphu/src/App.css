@@ -6,7 +6,10 @@
   --text: #eef1ff;
   --muted: #a9b2e6;
   --gold: #f5b82e;
+  --orange: #f08a24;
   --green: #1fa35c;
+  --red: #d8403a;
+  --blue: #3a6df0;
 }
 
 * { box-sizing: border-box; }
@@ -20,7 +23,8 @@ body {
 }
 
 a { color: var(--gold); }
-h2 { margin: 0 0 12px; }
+
+h1, h2 { margin: 0 0 12px; line-height: 1.25; }
 
 button {
   font: inherit;
@@ -32,6 +36,18 @@ button {
   color: #1a1400;
   font-weight: 600;
 }
+button:hover:not(:disabled) { filter: brightness(1.08); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+button.secondary { background: var(--panel-2); color: var(--text); }
+button.danger { background: var(--red); color: #fff; margin-top: 16px; }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
 
 input, select {
   font: inherit;
@@ -41,6 +57,9 @@ input, select {
   background: var(--panel);
   color: var(--text);
 }
+
+/* ---------- Khung ứng dụng ---------- */
+.app { min-height: 100vh; }
 
 .navbar {
   display: flex;
@@ -55,18 +74,28 @@ input, select {
 .brand { font-size: 1.25rem; font-weight: 700; color: var(--gold); }
 .nav-links { display: flex; flex-wrap: wrap; gap: 20px; }
 .nav-link { color: var(--text); text-decoration: none; padding: 4px 0; }
+.nav-link:hover { text-decoration: underline; }
 .nav-link.active { color: #ff4d4d; font-weight: 700; }
 
 .content { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
+
 .notice { font-size: 1.1rem; color: var(--muted); }
 .notice-error { color: #ff7a74; }
 
+/* ---------- Bảng ---------- */
 .filters { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-bottom: 12px; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; background: var(--panel); }
 th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
 th { background: var(--panel-2); }
 
+/* ---------- Trang chủ ---------- */
+.home h1 { font-size: 2.4rem; color: var(--gold); }
+.record { font-size: 1.15rem; font-weight: 600; }
+.rules { color: var(--muted); padding-left: 20px; max-width: 70ch; }
+.start-form { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; }
+
+/* ---------- Chi tiết câu hỏi ---------- */
 .detail-question { font-size: 1.15rem; }
 .detail-options { list-style: none; padding: 0; max-width: 560px; }
 .detail-options li {
@@ -77,3 +106,79 @@ th { background: var(--panel-2); }
   background: var(--panel);
 }
 .detail-options li.option-correct { background: var(--green); border-color: var(--green); font-weight: 600; }
+
+/* ---------- Màn hình chơi ---------- */
+.play { display: grid; grid-template-columns: 1fr 250px; gap: 24px; align-items: start; }
+
+.timer { font-size: 1.4rem; font-weight: 700; margin: 0 0 12px; }
+.timer-low { color: #ff4d4d; }
+
+.question-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.question-number { margin: 0 0 8px; color: var(--gold); font-weight: 600; }
+.question-text { font-size: 1.3rem; margin-bottom: 20px; }
+
+.answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.answer {
+  min-height: 56px;
+  text-align: left;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 2px solid var(--blue);
+  border-radius: 999px;
+  font-weight: 500;
+}
+.answer-letter { color: var(--gold); font-weight: 700; margin-right: 4px; }
+.answer:disabled { opacity: 1; cursor: default; }
+.answer-selected { background: var(--orange); border-color: var(--orange); color: #1a1000; }
+.answer-correct { background: var(--green); border-color: var(--green); color: #fff; }
+.answer-wrong { background: var(--red); border-color: var(--red); color: #fff; }
+.answer-selected .answer-letter,
+.answer-correct .answer-letter,
+.answer-wrong .answer-letter { color: inherit; }
+.answer-hidden { visibility: hidden; }
+
+.lifelines { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.lifeline { background: var(--panel-2); color: var(--text); border: 2px solid var(--gold); }
+.lifeline-stop { border-color: var(--red); }
+
+.audience { margin-top: 16px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.audience-title { margin: 0 0 10px; font-weight: 600; }
+.bar-track { background: var(--bg); border-radius: 6px; margin-bottom: 8px; }
+.bar {
+  background: var(--blue);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  min-height: 28px;
+  transition: width 0.4s ease;
+}
+
+.ladder { list-style: none; margin: 0; padding: 0; }
+.ladder-step {
+  display: flex;
+  gap: 12px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: var(--muted);
+}
+.ladder-number { width: 1.6em; text-align: right; }
+.ladder-milestone { font-weight: 700; color: var(--text); }
+.ladder-current { background: var(--gold); color: #1a1400; }
+
+/* ---------- Kết quả ---------- */
+.result h2 { font-size: 1.8rem; color: var(--gold); }
+.result-prize { font-size: 1.4rem; font-weight: 700; }
+.result-actions { display: flex; gap: 12px; margin-top: 16px; }
+
+@media (max-width: 800px) {
+  .play { grid-template-columns: 1fr; }
+  .play-side { order: -1; }
+  .ladder { display: flex; overflow-x: auto; gap: 6px; }
+  .ladder-step { flex: 0 0 auto; }
+  .answers { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar { transition: none; }
+}
