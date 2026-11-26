@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import './index.css';
@@ -8,14 +7,13 @@ import { ThemeProvider } from './context/ThemeContext';
 import { NoticeProvider } from './context/NoticeContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+// Không dùng React.StrictMode để bộ đếm "Số lần render" không bị nhân đôi
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider>
-        <NoticeProvider>
-          <App />
-        </NoticeProvider>
-      </ThemeProvider>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <ThemeProvider>
+      <NoticeProvider>
+        <App />
+      </NoticeProvider>
+    </ThemeProvider>
+  </Provider>
 );

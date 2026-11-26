@@ -1,7 +1,11 @@
+import { memo, useRef } from 'react';
 import { RESULT_LABELS } from '../data';
 import { getResult, getTeamName, isValidGoals } from '../utils';
 
 const MatchRow = ({ match, onGoals, onRemove }) => {
+  const renders = useRef(0);
+  renders.current += 1;
+
   const homeName = getTeamName(match.home);
   const awayName = getTeamName(match.away);
   const result = getResult(match);
@@ -41,6 +45,7 @@ const MatchRow = ({ match, onGoals, onRemove }) => {
       </td>
       <td>{awayName}</td>
       <td>{RESULT_LABELS[result]}</td>
+      <td>{renders.current}</td>
       <td>
         <button type="button" onClick={() => onRemove(match)}>
           Xóa
@@ -50,4 +55,4 @@ const MatchRow = ({ match, onGoals, onRemove }) => {
   );
 };
 
-export default MatchRow;
+export default memo(MatchRow);
