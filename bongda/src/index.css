@@ -1,7 +1,12 @@
 body { margin: 0; font-family: system-ui, sans-serif; }
-.app { min-height: 100vh; padding: 16px 24px; box-sizing: border-box; background: #ffffff; color: #18212c; }
+.app { min-height: 100vh; padding: 16px 24px; box-sizing: border-box; }
+.app.light { background: #ffffff; color: #18212c; }
+.app.dark { background: #1f2430; color: #e8eaf0; }
 table { border-collapse: collapse; margin: 8px 0; }
 th, td { border: 1px solid #8884; padding: 4px 8px; text-align: left; }
 input[type='number'] { width: 70px; }
 .add-form > div { margin-bottom: 8px; }
 .error { color: #c62828; font-size: 0.9em; }
+.notice { position: fixed; top: 8px; right: 8px; background: #323232; color: #fff;
+  padding: 8px 14px; border-radius: 4px; z-index: 10; }
+.notice:empty { display: none; }

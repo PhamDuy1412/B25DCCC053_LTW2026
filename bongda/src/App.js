@@ -1,22 +1,29 @@
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ROUNDS } from './data';
-import { matchesReducer } from './matchesReducer';
+import { removeMatch, selectMatches, setGoals, setMatches } from './features/matchesSlice';
 import useFetch from './hooks/useFetch';
-import { calcMatchStats, calcStandings } from './utils';
+import { useTheme } from './context/ThemeContext';
+import { useNotice } from './context/NoticeContext';
+import { calcMatchStats, calcStandings, getTeamName } from './utils';
 import MatchRow from './components/MatchRow';
 import StandingsTable from './components/StandingsTable';
 import AddMatchForm from './components/AddMatchForm';
+import GoalPlanner from './components/GoalPlanner';
 
 const BUILD_TAG = "bd-5918";
 
 const App = () => {
-  const [matches, dispatch] = useReducer(matchesReducer, []);
+  const matches = useSelector(selectMatches);
+  const dispatch = useDispatch();
+  const showNotice = useNotice();
+  const { theme, toggleTheme } = useTheme();
   const { data, loading, error } = useFetch('/data/matches.json');
   const [round, setRound] = useState('all');
 
   useEffect(() => {
-    if (data) dispatch({ type: 'LOAD', payload: data });
-  }, [data]);
+    if (data) dispatch(setMatches(data));
+  }, [data, dispatch]);
 
   const standings = useMemo(() => calcStandings(matches), [matches]);
   const shown = useMemo(
@@ -26,8 +33,11 @@ const App = () => {
   const stats = useMemo(() => calcMatchStats(shown), [shown]);
   const leader = matches.length > 0 ? standings[0] : null;
 
-  const handleGoals = (payload) => dispatch({ type: 'SET_GOALS', payload });
-  const handleRemove = (match) => dispatch({ type: 'REMOVE', payload: match.id });
+  const handleGoals = (payload) => dispatch(setGoals(payload));
+  const handleRemove = (match) => {
+    dispatch(removeMatch(match.id));
+    showNotice(`Đã xóa trận ${getTeamName(match.home)} - ${getTeamName(match.away)}`);
+  };
 
   let content;
   if (loading) {
@@ -82,15 +92,23 @@ const App = () => {
 
         <section>
           <h2>Thêm trận đấu</h2>
-          <AddMatchForm matches={matches} dispatch={dispatch} />
+          <AddMatchForm />
+        </section>
+
+        <section>
+          <h2>Mục tiêu điểm</h2>
+          <GoalPlanner standings={standings} />
         </section>
       </>
     );
   }
 
   return (
-    <div className="app" data-build={BUILD_TAG}>
+    <div className={`app ${theme}`} data-build={BUILD_TAG}>
       <h1>Giải bóng đá khoa</h1>
+      <button type="button" onClick={toggleTheme}>
+        {theme === 'light' ? 'Chế độ tối' : 'Chế độ sáng'}
+      </button>
       {content}
     </div>
   );
